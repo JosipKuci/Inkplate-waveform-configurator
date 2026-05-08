@@ -17,12 +17,15 @@ jobs:
           - os: ubuntu-latest
             artifact_name: waveform_editor
             asset_name: waveform-editor-linux
+            archive: true
           - os: macos-latest
             artifact_name: waveform_editor
             asset_name: waveform-editor-macos
+            archive: true
           - os: windows-latest
             artifact_name: waveform_editor.exe
             asset_name: waveform-editor-windows.exe
+            archive: false
 
     runs-on: ${{ matrix.os }}
 
@@ -39,11 +42,16 @@ jobs:
       - name: Build with PyInstaller
         run: pyinstaller waveform_editor.spec
 
-      - name: Rename artifact for upload
+      - name: Rename artifact
         shell: bash
         run: mv dist/${{ matrix.artifact_name }} dist/${{ matrix.asset_name }}
+
+      - name: Package as tar.gz (Linux and macOS)
+        if: matrix.archive == true
+        shell: bash
+        run: tar -czf dist/${{ matrix.asset_name }}.tar.gz -C dist ${{ matrix.asset_name }}
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/${{ matrix.asset_name }}
+          files: ${{ matrix.archive == true && format('dist/{0}.tar.gz', matrix.asset_name) || format('dist/{0}', matrix.asset_name) }}
