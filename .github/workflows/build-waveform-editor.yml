@@ -5,6 +5,9 @@ on:
     tags:
       - "waveform-v*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
