@@ -1,0 +1,16 @@
+# Inkplate Waveform Editor – Python dependencies
+#
+# Install with:   pip install -r requirements.txt
+#
+# Module           Purpose
+# ──────────────   ─────────────────────────────────────────────────────────
+# customtkinter    Modern dark/light GUI framework built on top of tkinter.
+#                  Required — the editor will not start without it.
+# pyserial         Serial port enumeration and communication with the device.
+#                  Optional — "Send to Device" is disabled if not installed.
+# esptool          ESP32 firmware flashing via Python API.
+#                  Optional — "Upload Firmware" is disabled if not installed.
+
+customtkinter>=5.2.0
+pyserial>=3.5
+esptool>=4.0

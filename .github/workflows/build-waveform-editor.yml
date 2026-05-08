@@ -1,0 +1,46 @@
+name: Build Waveform Editor
+
+on:
+  push:
+    tags:
+      - "waveform-v*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: waveform_editor
+            asset_name: waveform-editor-linux
+          - os: macos-latest
+            artifact_name: waveform_editor
+            asset_name: waveform-editor-macos
+          - os: windows-latest
+            artifact_name: waveform_editor.exe
+            asset_name: waveform-editor-windows.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build with PyInstaller
+        run: pyinstaller waveform_editor.spec
+
+      - name: Rename artifact for upload
+        shell: bash
+        run: mv dist/${{ matrix.artifact_name }} dist/${{ matrix.asset_name }}
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ matrix.asset_name }}
