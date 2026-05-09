@@ -37,7 +37,20 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: pip install -r requirements.txt pyinstaller Pillow
+
+      - name: Convert icon
+        shell: bash
+        run: |
+          python -c "
+          from PIL import Image
+          import sys, os
+          img = Image.open('docs/logo.jfif').convert('RGBA')
+          if sys.platform == 'win32':
+              img.save('docs/logo.ico', format='ICO', sizes=[(256,256),(128,128),(64,64),(32,32),(16,16)])
+          elif sys.platform == 'darwin':
+              img.save('docs/logo.icns', format='ICNS')
+          "
 
       - name: Build with PyInstaller
         run: pyinstaller waveform_editor.spec

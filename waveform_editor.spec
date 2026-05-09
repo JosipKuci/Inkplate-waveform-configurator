@@ -1,5 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
+import sys
 from PyInstaller.utils.hooks import collect_all
+
+# Icon is pre-converted by the build workflow (docs/logo.ico / .icns)
+_icon = None
+if sys.platform == "win32":
+    _icon = os.path.join("docs", "logo.ico")
+elif sys.platform == "darwin":
+    _icon = os.path.join("docs", "logo.icns")
 
 datas    = [("firmware", "firmware")]
 binaries = []
@@ -32,6 +41,7 @@ exe = EXE(
     a.datas,
     [],
     name="waveform_editor",
+    icon=_icon,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
