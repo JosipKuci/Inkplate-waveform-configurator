@@ -1,6 +1,8 @@
 # Inkplate Waveform Configurator
 
 [![Build](https://github.com/JosipKuci/Inkplate-waveform-configurator/actions/workflows/build-waveform-editor.yml/badge.svg)](https://github.com/JosipKuci/Inkplate-waveform-configurator/actions/workflows/build-waveform-editor.yml)
+[![Latest Release](https://img.shields.io/github/v/release/JosipKuci/Inkplate-waveform-configurator?label=release)](https://github.com/JosipKuci/Inkplate-waveform-configurator/releases/latest)
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 
 A desktop GUI tool for creating, editing, and sending custom EPD waveforms to Soldered Inkplate e-paper displays. Fine-tune how each grayscale level drives the e-paper panel, then push the waveform to your device over serial — no recompilation needed.
 
@@ -84,6 +86,38 @@ Pre-built executables are attached to every [release](https://github.com/JosipKu
 
 ---
 
+## How It Works
+
+### Waveform grid
+
+An EPD waveform defines how each grayscale level (color) drives the panel across a sequence of time steps (phases). Each cell in the grid holds one of three drive values:
+
+| Value | Meaning | Color in editor |
+|---|---|---|
+| `0` | Discharge — panel voltage released | Gray |
+| `1` | Black drive — pushes pixel toward black | Dark |
+| `2` | White drive — pushes pixel toward white | Light |
+
+Left-click a cell to cycle `0 → 1 → 2 → 0`. Right-click to set an exact value from a context menu.
+
+Use **+Ph / −Ph** to add or remove phase columns (max 16) and **+Color / −Color** to add or remove grayscale rows (max 16).
+
+### Sending a waveform to your device
+
+1. Flash the bundled firmware to your Inkplate using the **Upload Firmware** button (select the matching template first — the app picks the correct `firmware/<board>/firmware.bin` automatically).
+2. After flashing, select the correct serial port and baud rate (default `115200`).
+3. Click **Send to Device**. The waveform is transmitted over serial and applied immediately.
+
+### Exporting as C header
+
+Click **Export .h** to save a `customWaveform` array as a C header file, ready to include in an Arduino sketch.
+
+### Firmware upload
+
+The app bundles the Inkplate_Custom_Waveform firmware for every supported model under `firmware/<board>/firmware.bin`. When **Upload Firmware** is clicked, the app invokes esptool internally (no terminal needed) and streams progress to the built-in serial monitor.
+
+---
+
 ## Building from Source
 
 ### Prerequisites
@@ -149,38 +183,6 @@ pyinstaller waveform_editor.spec
 ```
 
 The output is placed in `dist/`. The `firmware/` directory is automatically bundled inside the executable via `waveform_editor.spec`.
-
----
-
-## How It Works
-
-### Waveform grid
-
-An EPD waveform defines how each grayscale level (color) drives the panel across a sequence of time steps (phases). Each cell in the grid holds one of three drive values:
-
-| Value | Meaning | Color in editor |
-|---|---|---|
-| `0` | Discharge — panel voltage released | Gray |
-| `1` | Black drive — pushes pixel toward black | Dark |
-| `2` | White drive — pushes pixel toward white | Light |
-
-Left-click a cell to cycle `0 → 1 → 2 → 0`. Right-click to set an exact value from a context menu.
-
-Use **+Ph / −Ph** to add or remove phase columns (max 16) and **+Color / −Color** to add or remove grayscale rows (max 16).
-
-### Sending a waveform to your device
-
-1. Flash the bundled firmware to your Inkplate using the **Upload Firmware** button (select the matching template first — the app picks the correct `firmware/<board>/firmware.bin` automatically).
-2. After flashing, select the correct serial port and baud rate (default `115200`).
-3. Click **Send to Device**. The waveform is transmitted over serial and applied immediately.
-
-### Exporting as C header
-
-Click **Export .h** to save a `customWaveform` array as a C header file, ready to include in an Arduino sketch.
-
-### Firmware upload
-
-The app bundles the Inkplate_Custom_Waveform firmware for every supported model under `firmware/<board>/firmware.bin`. When **Upload Firmware** is clicked, the app invokes esptool internally (no terminal needed) and streams progress to the built-in serial monitor.
 
 ---
 
